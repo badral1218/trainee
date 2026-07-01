@@ -1,0 +1,917 @@
+
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ES6+ JavaScript сурах гарын авлага</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #171a23;
+    --panel2: #1e2230;
+    --ink: #e8e9ee;
+    --muted: #8b8fa3;
+    --accent: #5ec8f2;
+    --accent2: #f2a65e;
+    --ok: #6fd08c;
+    --err: #f26e6e;
+    --border: #2a2e3d;
+    --mono: "SF Mono", "Fira Code", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+  }
+  header {
+    padding: 2.2rem 1.5rem 1.2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.7rem;
+    letter-spacing: -0.01em;
+  }
+  header p { color: var(--muted); margin: 0; font-size: 0.95rem; }
+
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  nav.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+  nav.toc a:hover { color: var(--accent); border-color: var(--accent); }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+  }
+
+  section { scroll-margin-top: 1rem; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .section-num {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+  section h2 { margin: 0; font-size: 1.2rem; }
+  section > p.desc { color: var(--muted); margin: 0.2rem 0 0.9rem; font-size: 0.92rem; }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  @media (min-width: 760px) {
+    .grid2 { grid-template-columns: 1fr 1fr; }
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .panel-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel2);
+  }
+  pre {
+    margin: 0;
+    padding: 0.9rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+  .kw { color: #c792ea; }
+  .fn { color: var(--accent); }
+  .str { color: var(--ok); }
+  .cm { color: var(--muted); font-style: italic; }
+  .num { color: var(--accent2); }
+
+  .run-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.9rem;
+    border-top: 1px solid var(--border);
+    background: var(--panel2);
+  }
+  button.run {
+    background: var(--accent);
+    color: #0f1117;
+    border: none;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  button.run:hover { filter: brightness(1.1); }
+  button.run:disabled { opacity: 0.5; cursor: default; }
+
+  .output {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    padding: 0.9rem;
+    background: #0b0d13;
+    min-height: 1.2rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .output .line { padding: 0.1rem 0; }
+  .output .ok { color: var(--ok); }
+  .output .err { color: var(--err); }
+  .output .muted { color: var(--muted); }
+
+  .note {
+    background: var(--panel2);
+    border-left: 3px solid var(--accent2);
+    padding: 0.6rem 0.9rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+  .note b { color: var(--accent2); }
+
+  /* DOM demo specific */
+  #dom-demo-box {
+    background: var(--panel2);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #dom-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  #dom-list li {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+  }
+  #dom-list li button {
+    background: var(--err);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+  }
+  .dom-controls { display: flex; gap: 0.5rem; }
+  .dom-controls input {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ES6+ JavaScript — practical гарын авлага</h1>
+  <p>Товч тайлбар, ажиллах жишээ код, "Ажиллуулах" товч бүхий интерактив хичээл</p>
+</header>
+
+<nav class="toc">
+  <a href="#arrow">Сум функц</a>
+  <a href="#destructure">Задаргаа</a>
+  <a href="#spread">Тараах/Үлдэгдэл</a>
+  <a href="#chaining">Гинжлэлт</a>
+  <a href="#async">Async/Await</a>
+  <a href="#eventloop">Үйл явдлын давталт</a>
+  <a href="#closure">Хаалт</a>
+  <a href="#dom">DOM</a>
+</nav>
+
+<main>
+
+  <!-- 1. ARROW FUNCTIONS -->
+  <section id="arrow">
+    <div class="section-head"><span class="section-num">01</span><h2>Сум функц (Arrow Function)</h2></div>
+    <p class="desc">Богино синтакстай бөгөөд <code>this</code>-г өөрийн биш, тодорхойлогдсон орчноосоо (lexical) авдаг.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-arrow"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">function ↔ arrow харьцуулалт</span>
+          <button class="run" data-target="arrow">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-arrow"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+    <div class="note"><b>Санамж:</b> Энгийн <code>function</code> дотор <code>this</code> нь дуудагдсан аргаас хамаарч өөрчлөгддөг. Sum функц (arrow) бол <code>this</code>-г эргэн тойрны блокоос "өвлөж" авдаг тул объект дотор setTimeout, callback ашиглахад ялангуяа тохиромжтой.</div>
+  </section>
+
+  <!-- 2. DESTRUCTURING -->
+  <section id="destructure">
+    <div class="section-head"><span class="section-num">02</span><h2>Задаргаа (Destructuring)</h2></div>
+    <p class="desc">Массив болон объектын утгуудыг шууд хувьсагч руу задлан авах арга.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-destructure"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">object + array destructuring</span>
+          <button class="run" data-target="destructure">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-destructure"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SPREAD / REST -->
+  <section id="spread">
+    <div class="section-head"><span class="section-num">03</span><h2>Тараах ба Үлдэгдэл (Spread / Rest)</h2></div>
+    <p class="desc"><code>...</code> тэмдэг хоёр өөр үүрэгтэй: элементүүдийг "тараах" (spread) эсвэл үлдсэн хэсгийг "цуглуулах" (rest).</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-spread"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">spread → тараах, rest → цуглуулах</span>
+          <button class="run" data-target="spread">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-spread"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. OPTIONAL CHAINING / NULLISH COALESCING -->
+  <section id="chaining">
+    <div class="section-head"><span class="section-num">04</span><h2>Нэмэлт гинжлэлт (Optional Chaining)</h2></div>
+    <p class="desc"><code>?.</code> нь объектын дотоод шинж чанарт хандахдаа алдаа шидэхийн оронд <code>undefined</code> буцаана. <code>??</code> нь зөвхөн <code>null</code>/<code>undefined</code> үед л default утга өгнө (<code>0</code>, <code>""</code>-ийг "хоосон" гэж үзэхгүй).</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-chaining"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">?. ба ??</span>
+          <button class="run" data-target="chaining">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-chaining"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ASYNC/AWAIT -->
+  <section id="async">
+    <div class="section-head"><span class="section-num">05</span><h2>Async / Await</h2></div>
+    <p class="desc">Promise дээр суурилсан, синхрон код мэт харагдах боловч асинхроноор ажилладаг синтакс.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-async"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">хиймэл сервер хүсэлт (1сек хүлээнэ)</span>
+          <button class="run" data-target="async">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-async"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. EVENT LOOP -->
+  <section id="eventloop">
+    <div class="section-head"><span class="section-num">06</span><h2>Үйл явдлын давталт (Event Loop)</h2></div>
+    <p class="desc">JS нь нэг л thread дээр ажилладаг ч <b>Call Stack</b>, <b>Microtask Queue</b> (Promise), <b>Macrotask/Callback Queue</b> (setTimeout) гэсэн бүтэцтэй. Microtask нь Macrotask-с үргэлж түрүүлж гүйцэтгэгддэг.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-eventloop"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">гүйцэтгэгдэх дараалал таамаглаад дараа нь шалгаарай</span>
+          <button class="run" data-target="eventloop">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-eventloop"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+    <div class="note"><b>Дараалал:</b> 1) Синхрон код (Call Stack) → 2) Бүх Microtask (Promise.then) → 3) Дараагийн Macrotask (setTimeout) нэг нэгээр. Энэ мөчлөг browser render хийх мөчлөгтэй ээлжлэн явагддаг.</div>
+  </section>
+
+  <!-- 7. CLOSURE -->
+  <section id="closure">
+    <div class="section-head"><span class="section-num">07</span><h2>Хаалт (Closure)</h2></div>
+    <p class="desc">Дотоод функц нь гадаад функцийнхаа хувьсагчдад — тэр функц ажиллаж дуусаад ч гэсэн — хандах чадвартай байдаг. Энэ нь "private" төлөв үүсгэх гол механизм.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-label">Код</div>
+        <pre id="code-closure"></pre>
+        <div class="run-row">
+          <span class="cm" style="font-size:0.78rem">тоолуур counter() — тусдаа санах ойтой</span>
+          <button class="run" data-target="closure">▶ Ажиллуулах</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Гаралт</div>
+        <div class="output" id="out-closure"><span class="muted">Ажиллуулах товчийг дарна уу…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. DOM -->
+  <section id="dom">
+    <div class="section-head"><span class="section-num">08</span><h2>DOM хэрхэн ажилладаг вэ</h2></div>
+    <p class="desc">DOM (Document Object Model) бол HTML-г JS-ээс хандаж, унших, өөрчилж болох "модны" бүтэц болгож харуулдаг интерфейс. Доорх жишээ бол бодит DOM-той ажилладаг амьд жагсаалт (todo).</p>
+
+    <div class="panel">
+      <div class="panel-label">Код (жагсаалтад нэмэх/устгах логик)</div>
+      <pre id="code-dom"></pre>
+    </div>
+
+    <div class="panel" style="margin-top:0.9rem;">
+      <div class="panel-label">Амьд DOM демо — доор бичээд нэмээрэй</div>
+      <div style="padding:0.9rem;">
+        <div id="dom-demo-box">
+          <div class="dom-controls">
+            <input id="dom-input" type="text" placeholder="Жишээ нь: сүү авах" />
+            <button class="run" id="dom-add-btn">+ Нэмэх</button>
+          </div>
+          <ul id="dom-list"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="note"><b>Юу болж байна вэ:</b> Товч дарах бүрт <code>createElement</code> хийж шинэ <code>&lt;li&gt;</code> DOM мод руу <code>appendChild</code>-аар нэмэгдэж байна. Устгах товч дарахад <code>event delegation</code> ашиглан жагсаалтын эцэг элемент дээр нэг л listener суулгасан байгаа — ингэснээр DOM руу шинээр нэмэгдсэн элементүүд дээр ч ажиллана.</div>
+  </section>
+
+</main>
+
+<footer>ES6+ • сум функц, задаргаа, spread/rest, optional chaining, async/await, event loop, closure, DOM</footer>
+
+<script>
+/* ============================================================
+   Туслах функцууд — код харуулах, гаралт бичих
+   ============================================================ */
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlight(code) {
+  let h = escapeHtml(code);
+  h = h.replace(/(\/\/.*$)/gm, '<span class="cm">$1</span>');
+  h = h.replace(/\b(const|let|var|function|return|async|await|if|else|for|of|in|new|class|try|catch|throw|typeof|null|undefined|true|false|delete)\b/g, '<span class="kw">$1</span>');
+  h = h.replace(/(&quot;.*?&quot;|'.*?'|`.*?`)/g, '<span class="str">$1</span>');
+  h = h.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+  return h;
+}
+
+function setCode(id, code) {
+  document.getElementById(id).innerHTML = highlight(code.trim());
+}
+
+function logTo(outId) {
+  const box = document.getElementById(outId);
+  let first = true;
+  return function(...args) {
+    if (first) { box.innerHTML = ''; first = false; }
+    const line = document.createElement('div');
+    line.className = 'line';
+    line.textContent = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+    box.appendChild(line);
+  };
+}
+
+function bindRunner(key, fn) {
+  const btn = document.querySelector(`button[data-target="${key}"]`);
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const log = logTo(`out-${key}`);
+    try {
+      await fn(log);
+    } catch (e) {
+      log('❌ Алдаа: ' + e.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
+/* ============================================================
+   1. СУМ ФУНКЦ (ARROW FUNCTION)
+   ============================================================ */
+const arrowCode = `
+// Энгийн function
+function square1(x) {
+  return x * x;
+}
+
+// Сум функц — нэг мөр, шууд буцаана (implicit return)
+const square2 = x => x * x;
+
+// Олон параметртэй сум функц
+const add = (a, b) => a + b;
+
+// 'this' асуудлыг харуулах жишээ
+const timer = {
+  seconds: 0,
+  startClassic: function() {
+    // Энгийн function дотор 'this' алдагдана
+    return function() {
+      this.seconds++; // 'this' энд timer биш!
+    };
+  },
+  startArrow: function() {
+    // Arrow функц 'this'-г гадны орчноос авна
+    return () => {
+      this.seconds++; // 'this' энд timer мөн
+      return this.seconds;
+    };
+  }
+};
+
+console.log(square1(5), square2(5), add(2, 3));
+const tick = timer.startArrow();
+console.log('timer.seconds:', tick(), tick(), tick());
+`;
+setCode('code-arrow', arrowCode);
+
+bindRunner('arrow', (log) => {
+  function square1(x) { return x * x; }
+  const square2 = x => x * x;
+  const add = (a, b) => a + b;
+
+  const timer = {
+    seconds: 0,
+    startArrow: function() {
+      return () => {
+        this.seconds++;
+        return this.seconds;
+      };
+    }
+  };
+
+  log(`square1(5) = ${square1(5)}`);
+  log(`square2(5) = ${square2(5)}`);
+  log(`add(2, 3) = ${add(2, 3)}`);
+  const tick = timer.startArrow();
+  log(`arrow 'this' ашиглаж timer.seconds өсгөх: ${tick()}, ${tick()}, ${tick()}`);
+});
+
+/* ============================================================
+   2. ЗАДАРГАА (DESTRUCTURING)
+   ============================================================ */
+const destructureCode = `
+// Объект задаргаа
+const user = { name: 'Бат', age: 28, city: 'Улаанбаатар' };
+const { name, age } = user;
+
+// Нэр өөрчлөх + default утга
+const { city: hometown, country = 'Монгол' } = user;
+
+// Массив задаргаа
+const colors = ['улаан', 'ногоон', 'хөх'];
+const [first, , third] = colors; // 2-хыг алгаслаа
+
+// Функцийн параметр дээр задаргаа (маш түгээмэл хэрэглээ)
+function printUser({ name, age }) {
+  return \`\${name} - \${age} настай\`;
+}
+
+// Хосолсон/nested задаргаа
+const response = { data: { id: 1, tags: ['js', 'es6'] } };
+const { data: { id, tags: [firstTag] } } = response;
+
+console.log(name, age, hometown, country);
+console.log(first, third);
+console.log(printUser(user));
+console.log(id, firstTag);
+`;
+setCode('code-destructure', destructureCode);
+
+bindRunner('destructure', (log) => {
+  const user = { name: 'Бат', age: 28, city: 'Улаанбаатар' };
+  const { name, age } = user;
+  const { city: hometown, country = 'Монгол' } = user;
+
+  const colors = ['улаан', 'ногоон', 'хөх'];
+  const [first, , third] = colors;
+
+  function printUser({ name, age }) {
+    return `${name} - ${age} настай`;
+  }
+
+  const response = { data: { id: 1, tags: ['js', 'es6'] } };
+  const { data: { id, tags: [firstTag] } } = response;
+
+  log(`name=${name}, age=${age}, hometown=${hometown}, country=${country}`);
+  log(`first=${first}, third=${third}`);
+  log(printUser(user));
+  log(`id=${id}, firstTag=${firstTag}`);
+});
+
+/* ============================================================
+   3. SPREAD / REST
+   ============================================================ */
+const spreadCode = `
+// SPREAD — массивыг "тараах"
+const nums1 = [1, 2, 3];
+const nums2 = [4, 5, 6];
+const combined = [...nums1, ...nums2]; // [1,2,3,4,5,6]
+
+// SPREAD — объектыг тараах (хуулбарлах/нэгтгэх)
+const base = { role: 'user', active: true };
+const admin = { ...base, role: 'admin' }; // role-г дарж бичнэ
+
+// SPREAD — функц дуудахад аргументуудыг тараах
+const max = Math.max(...nums2); // Math.max(4,5,6)
+
+// REST — үлдсэн аргументуудыг массив болгож цуглуулах
+function sum(first, ...rest) {
+  return first + rest.reduce((a, b) => a + b, 0);
+}
+
+// REST — объект задаргаанд
+const { role, ...otherProps } = admin;
+
+console.log(combined);
+console.log(admin);
+console.log('max:', max);
+console.log('sum:', sum(1, 2, 3, 4));
+console.log('otherProps:', otherProps);
+`;
+setCode('code-spread', spreadCode);
+
+bindRunner('spread', (log) => {
+  const nums1 = [1, 2, 3];
+  const nums2 = [4, 5, 6];
+  const combined = [...nums1, ...nums2];
+
+  const base = { role: 'user', active: true };
+  const admin = { ...base, role: 'admin' };
+
+  const max = Math.max(...nums2);
+
+  function sum(first, ...rest) {
+    return first + rest.reduce((a, b) => a + b, 0);
+  }
+
+  const { role, ...otherProps } = admin;
+
+  log(`combined = [${combined.join(', ')}]`);
+  log(`admin = ${JSON.stringify(admin)}`);
+  log(`max = ${max}`);
+  log(`sum(1,2,3,4) = ${sum(1, 2, 3, 4)}`);
+  log(`otherProps = ${JSON.stringify(otherProps)}  (role="${role}" тусад нь гарсан)`);
+});
+
+/* ============================================================
+   4. OPTIONAL CHAINING / NULLISH COALESCING
+   ============================================================ */
+const chainingCode = `
+const user = {
+  name: 'Сараа',
+  address: { city: 'Дархан' }
+  // 'phone' огт байхгүй
+};
+
+// ?. ашиглаагүй бол алдаа шидэнэ: Cannot read properties of undefined
+const zip = user.phone?.mobile?.number; // undefined, алдаа шидэхгүй
+
+// Функц дуудахад ?. ашиглах — байхгүй бол дуудахгүй
+const greet = user.sayHi?.(); // sayHi байхгүй тул undefined
+
+// Массивын элемент дээр
+const list = null;
+const item = list?.[0]; // undefined
+
+// ?? — зөвхөн null/undefined үед default утга өгнө
+const score = 0;
+const displayScore = score ?? 100; // 0 (учир нь 0 "хоосон" биш)
+const displayScoreOr = score || 100; // 100 !! || нь 0-г falsy гэж үзнэ
+
+console.log('zip:', zip);
+console.log('greet:', greet);
+console.log('item:', item);
+console.log('?? ашигласан:', displayScore);
+console.log('|| ашигласан:', displayScoreOr);
+`;
+setCode('code-chaining', chainingCode);
+
+bindRunner('chaining', (log) => {
+  const user = { name: 'Сараа', address: { city: 'Дархан' } };
+  const zip = user.phone?.mobile?.number;
+  const greet = user.sayHi?.();
+  const list = null;
+  const item = list?.[0];
+  const score = 0;
+  const displayScore = score ?? 100;
+  const displayScoreOr = score || 100;
+
+  log(`user.phone?.mobile?.number = ${zip}`);
+  log(`user.sayHi?.() = ${greet}`);
+  log(`list?.[0] = ${item}`);
+  log(`score ?? 100 = ${displayScore}  (0 хадгалагдана)`);
+  log(`score || 100 = ${displayScoreOr}  (0 falsy тул дарагдана)`);
+});
+
+/* ============================================================
+   5. ASYNC / AWAIT
+   ============================================================ */
+const asyncCode = `
+// Promise буцаадаг хиймэл функц
+function fetchUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id > 0) resolve({ id, name: 'Хэрэглэгч-' + id });
+      else reject(new Error('Буруу id'));
+    }, 1000);
+  });
+}
+
+// async функц дотор await ашиглан синхрон мэт бичих
+async function loadUser() {
+  console.log('Ачааллаж эхэллээ...');
+  try {
+    const user = await fetchUser(7);   // энд 1 сек хүлээнэ
+    console.log('Амжилттай:', user);
+
+    const second = await fetchUser(3); // дараагийн хүсэлт
+    console.log('Хоёр дахь:', second);
+  } catch (err) {
+    console.log('Алдаа гарлаа:', err.message);
+  }
+}
+
+// Хэд хэдэн Promise-г ЗЭРЭГ ажиллуулах (хурдан)
+async function loadParallel() {
+  const [a, b] = await Promise.all([fetchUser(1), fetchUser(2)]);
+  console.log('Зэрэг ачаалсан:', a, b);
+}
+
+loadUser();
+`;
+setCode('code-async', asyncCode);
+
+bindRunner('async', async (log) => {
+  function fetchUser(id) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (id > 0) resolve({ id, name: 'Хэрэглэгч-' + id });
+        else reject(new Error('Буруу id'));
+      }, 700);
+    });
+  }
+
+  log('Ачааллаж эхэллээ… (700мс хүлээнэ)');
+  const user = await fetchUser(7);
+  log(`Амжилттай: ${JSON.stringify(user)}`);
+
+  log('Дараагийн хүсэлт илгээж байна…');
+  const [a, b] = await Promise.all([fetchUser(1), fetchUser(2)]);
+  log(`Promise.all зэрэг ачаалсан: ${JSON.stringify(a)} , ${JSON.stringify(b)}`);
+});
+
+/* ============================================================
+   6. EVENT LOOP
+   ============================================================ */
+const eventloopCode = `
+console.log('1: синхрон эхлэл');
+
+setTimeout(() => {
+  console.log('2: setTimeout (macrotask)');
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log('3: Promise.then (microtask)');
+});
+
+console.log('4: синхрон төгсгөл');
+
+// Гарах дараалал: 1, 4, 3, 2
+// Учир нь:
+//  - Синхрон код (Call Stack) хамгийн түрүүнд гүйцэтгэгдэнэ → 1, 4
+//  - Дараа нь бүх Microtask (Promise) → 3
+//  - Хамгийн сүүлд Macrotask (setTimeout) → 2
+`;
+setCode('code-eventloop', eventloopCode);
+
+bindRunner('eventloop', (log) => {
+  log('1: синхрон эхлэл');
+
+  setTimeout(() => {
+    log('2: setTimeout (macrotask) — ХАМГИЙН СҮҮЛД');
+  }, 0);
+
+  Promise.resolve().then(() => {
+    log('3: Promise.then (microtask) — синхроны дараа шууд');
+  });
+
+  log('4: синхрон төгсгөл');
+});
+
+/* ============================================================
+   7. CLOSURE
+   ============================================================ */
+const closureCode = `
+function createCounter() {
+  let count = 0; // энэ хувьсагч "хаагдсан" (closed over)
+
+  return {
+    increment() { count++; return count; },
+    decrement() { count--; return count; },
+    value()     { return count; }
+  };
+}
+
+const counterA = createCounter();
+const counterB = createCounter(); // тусад нь, өөр 'count'-той
+
+console.log(counterA.increment()); // 1
+console.log(counterA.increment()); // 2
+console.log(counterB.increment()); // 1 — counterA-тай холбоогүй!
+console.log(counterA.value(), counterB.value());
+
+// Practical хэрэглээ: private/хамгаалагдсан төлөв
+function createBankAccount(balance) {
+  return {
+    deposit(amount) { balance += amount; return balance; },
+    getBalance() { return balance; }
+    // 'balance'-д гаднаас шууд хандах боломжгүй
+  };
+}
+const acc = createBankAccount(1000);
+acc.deposit(500);
+console.log('Үлдэгдэл:', acc.getBalance());
+`;
+setCode('code-closure', closureCode);
+
+bindRunner('closure', (log) => {
+  function createCounter() {
+    let count = 0;
+    return {
+      increment() { count++; return count; },
+      decrement() { count--; return count; },
+      value() { return count; }
+    };
+  }
+
+  const counterA = createCounter();
+  const counterB = createCounter();
+
+  log(`counterA.increment() = ${counterA.increment()}`);
+  log(`counterA.increment() = ${counterA.increment()}`);
+  log(`counterB.increment() = ${counterB.increment()}  (тусдаа санах ой!)`);
+  log(`counterA.value()=${counterA.value()}, counterB.value()=${counterB.value()}`);
+
+  function createBankAccount(balance) {
+    return {
+      deposit(amount) { balance += amount; return balance; },
+      getBalance() { return balance; }
+    };
+  }
+  const acc = createBankAccount(1000);
+  acc.deposit(500);
+  log(`Дансны үлдэгдэл (private closure-оор хамгаалагдсан): ${acc.getBalance()}`);
+});
+
+/* ============================================================
+   8. DOM
+   ============================================================ */
+const domCode = `
+const list = document.getElementById('dom-list');
+const input = document.getElementById('dom-input');
+
+function addItem(text) {
+  const li = document.createElement('li');   // 1. Элемент үүсгэх
+  const span = document.createElement('span');
+  span.textContent = text;
+
+  const btn = document.createElement('button');
+  btn.textContent = 'устгах';
+  btn.dataset.action = 'remove';              // 2. Шинж чанар онооx
+
+  li.append(span, btn);
+  list.appendChild(li);                       // 3. DOM модонд нэмэх
+}
+
+document.getElementById('dom-add-btn')
+  .addEventListener('click', () => {
+    if (input.value.trim()) {
+      addItem(input.value.trim());
+      input.value = '';
+    }
+  });
+
+// Event delegation: жагсаалт дээр НЭГ л listener,
+// дотор нь бий болсон бүх товч дээр ажиллана
+list.addEventListener('click', (e) => {
+  if (e.target.dataset.action === 'remove') {
+    e.target.closest('li').remove();         // 4. DOM-оос устгах
+  }
+});
+`;
+setCode('code-dom', domCode);
+
+// Live DOM demo — жинхэнэ ажиллагаа
+const domList = document.getElementById('dom-list');
+const domInput = document.getElementById('dom-input');
+
+function addDomItem(text) {
+  const li = document.createElement('li');
+  const span = document.createElement('span');
+  span.textContent = text;
+  const btn = document.createElement('button');
+  btn.textContent = 'устгах';
+  btn.dataset.action = 'remove';
+  li.append(span, btn);
+  domList.appendChild(li);
+}
+
+document.getElementById('dom-add-btn').addEventListener('click', () => {
+  const v = domInput.value.trim();
+  if (v) {
+    addDomItem(v);
+    domInput.value = '';
+    domInput.focus();
+  }
+});
+
+domInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('dom-add-btn').click();
+});
+
+domList.addEventListener('click', (e) => {
+  if (e.target.dataset.action === 'remove') {
+    e.target.closest('li').remove();
+  }
+});
+
+// эхний жишээ өгөгдөл
+['сүү авах', 'JS дасгал хийх', 'DOM жишээ турших'].forEach(addDomItem);
+</script>
+</body>
+</html>
