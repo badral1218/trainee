@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semantic HTML Layout</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .container {
+        width: 600px;
+        border: 8px solid #ddd;
+        padding: 10px;
+        background: #f5f5f5;
+      }
+
+      header {
+        background: deeppink;
+        color: black;
+        text-align: center;
+        padding: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      nav {
+        background: lime;
+        text-align: center;
+        padding: 10px;
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .content {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      aside {
+        width: 150px;
+        background: deeppink;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 28px;
+        color: black;
+      }
+
+      main {
+        flex: 1;
+        background: lightskyblue;
+        padding: 15px;
+        text-align: center;
+        font-size: 26px;
+      }
+
+      article {
+        background: blue;
+        padding: 15px;
+        margin-top: 10px;
+        color: white;
+      }
+
+      figure {
+        background: #ffe96b;
+        color: black;
+        padding: 25px;
+        margin: 15px 0;
+      }
+
+      p {
+        background: #98fb98;
+        color: black;
+        padding: 25px;
+        margin-bottom: 15px;
+      }
+
+      section {
+        color: white;
+        padding: 10px;
+        border: 2px solid cyan;
+      }
+
+      footer {
+        background: purple;
+        color: black;
+        text-align: center;
+        padding: 20px;
+        font-size: 28px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Semantic HTML</h1>
+
+    <div class="container">
+      <header>&lt;header&gt;</header>
+
+      <nav>&lt;nav&gt;</nav>
+
+      <div class="content">
+        <aside>&lt;aside&gt;</aside>
+
+        <main>
+          &lt;main&gt;
+
+          <article>
+            &lt;article&gt;
+
+            <figure>&lt;figure&gt;</figure>
+
+            <p>&lt;p&gt;</p>
+
+            <section>&lt;section&gt;</section>
+          </article>
+        </main>
+      </div>
+
+      <footer>&lt;footer&gt;</footer>
+    </div>
+  </body>
+</html>
